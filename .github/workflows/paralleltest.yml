@@ -100,7 +100,7 @@ jobs:
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
       - name: Generate parallelList - ${{ matrix.suite }}
-        uses: adoptium/run-aqa@v2.0.1
+        uses: joe-braley/run-aqa@v1.0
         with:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
