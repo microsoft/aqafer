@@ -82,10 +82,10 @@ jobs:
         shell: bash
         if: ${{ inputs.system != 'windows' }}
         run: |
-          ls -la
-          rm -rf /*
-          rm -rf /.??*
-          ls -la
+          ls -la ./
+          rm -rf ./*
+          rm -rf ./.??*
+          ls -la ./
 
       - name: Setup windows environment
         working-directory: ${{ github.workspace }}
@@ -140,10 +140,10 @@ jobs:
         shell: bash
         if: ${{ inputs.system != 'windows' }}
         run: |
-          ls -la
-          rm -rf /*
-          rm -rf /.??*
-          ls -la
+          ls -la ./
+          rm -rf ./*
+          rm -rf ./.??*
+          ls -la ./
 
       - name: Download parallelList - ${{ matrix.suite }}
         uses: actions/download-artifact@v2
