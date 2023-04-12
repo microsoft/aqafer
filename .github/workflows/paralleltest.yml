@@ -17,6 +17,12 @@ on:
       system:
         description: System being tested
         required: true
+      version:
+        description: JDK version
+        required: false
+        options:
+          - '11'
+          - '17'
       pool:
         description: agent pool
         required: true
@@ -200,6 +206,7 @@ jobs:
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ matrix.suite }}
           target : -f parallelList.mk ${{ matrix.test_list }}
+          version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
         if: always() # Always run this step (even if the tests failed)
