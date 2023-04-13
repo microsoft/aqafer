@@ -61,7 +61,18 @@ jobs:
         suite: [functional, openjdk, system, perf]
     steps:
 
-      - name: Setup environment
+      - name: Setup ANT_HOME
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          curl -OLJKSks https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
+          curl -o ant-contrib.tar.gz -LJSks https://sourceforge.net/projects/ant-contrib/files/ant-contrib/ant-contrib-1.0b2/ant-contrib-1.0b2-bin.tar.gz/download
+          tar xvf ant-contrib.tar.gz
+          tar xvf apache-ant-1.9.16-bin.tar.gz
+          mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
+          echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
+
+      - name: Setup TEST_JDK_HOME
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
@@ -108,6 +119,18 @@ jobs:
         with:
           name: ${{ matrix.suite }}-parallelList.mk
           path: ./
+
+      - name: Setup ANT_HOME
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          curl -OLJKSks https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
+          curl -o ant-contrib.tar.gz -LJSks https://sourceforge.net/projects/ant-contrib/files/ant-contrib/ant-contrib-1.0b2/ant-contrib-1.0b2-bin.tar.gz/download
+          tar xvf ant-contrib.tar.gz
+          tar xvf apache-ant-1.9.16-bin.tar.gz
+          mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
+          echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
+          echo "ANT_OPTS="-Xms256M -Xmx512M"" >> $GITHUB_ENV
 
       - name: Setup non-windows environment
         working-directory: ${{ github.workspace }}
