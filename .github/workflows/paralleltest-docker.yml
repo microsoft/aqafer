@@ -71,6 +71,7 @@ jobs:
           tar xvf apache-ant-1.9.16-bin.tar.gz
           mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
           echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
+          echo "PATH=$ANT_HOME/bin:$PATH" >> $GITHUB_ENV
 
       - name: Setup TEST_JDK_HOME
         working-directory: ${{ github.workspace }}
@@ -131,6 +132,7 @@ jobs:
           mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
           echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
           echo "ANT_OPTS="-Xms256M -Xmx512M"" >> $GITHUB_ENV
+          echo "PATH=$ANT_HOME/bin:$PATH" >> $GITHUB_ENV
 
       - name: Setup non-windows environment
         working-directory: ${{ github.workspace }}
