@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [setup-parallel-docker, configuration]
     container:
-      image: ${{ secrets.CONTAINER_REGISTRY }}
+      image: ${{ inputs.containerRegistry }}
       env:
         USE_TESTENV_PROPERTIES: true
       options: --cpus 2
