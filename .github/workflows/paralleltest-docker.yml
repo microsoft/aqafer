@@ -80,8 +80,8 @@ jobs:
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
-          curl -s -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
+          curl -s -o linux-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+          mkdir tmp && tar -xzf linux-binaries.tar.gz -C ./tmp
           jdk_directory=$(ls ./tmp)
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
@@ -141,15 +141,19 @@ jobs:
         run: |
           echo "$ANT_HOME/bin" >> $GITHUB_PATH
 
-      - name: Setup non-windows environment
+      - name: Setup TEST_JDK_HOME
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
-          curl -s -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
+          curl -s -o linux-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+          mkdir tmp && tar -xzf linux-binaries.tar.gz -C ./tmp
           jdk_directory=$(ls ./tmp)
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
+      - name: Setup TESTIMAGE_PATH
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
           curl -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}${{ secrets.SAS_TOKEN }}"
           mkdir ./tmp-libs && tar xvf jdk-native-libs.tar.gz -C ./tmp-libs
           file_name=$(ls ./tmp-libs)
