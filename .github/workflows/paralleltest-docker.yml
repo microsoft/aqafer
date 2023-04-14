@@ -71,7 +71,10 @@ jobs:
           tar xvf apache-ant-1.9.16-bin.tar.gz
           mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
           echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
-          echo "PATH=$ANT_HOME/bin:$PATH" >> $GITHUB_ENV
+
+      - name: update PATH
+        run: |
+          echo "$ANT_HOME/bin" >> $GITHUB_PATH
 
       - name: Setup TEST_JDK_HOME
         working-directory: ${{ github.workspace }}
@@ -104,6 +107,7 @@ jobs:
       image: ${{ inputs.containerRegistry }}
       env:
         USE_TESTENV_PROPERTIES: true
+        DISPLAY: ':1'
       options: --cpus 2
       credentials:
         username: ${{ secrets.ACR_TOKEN_NAME }}
@@ -132,7 +136,10 @@ jobs:
           mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
           echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
           echo "ANT_OPTS="-Xms256M -Xmx512M"" >> $GITHUB_ENV
-          echo "PATH=$ANT_HOME/bin:$PATH" >> $GITHUB_ENV
+
+      - name: update PATH
+        run: |
+          echo "$ANT_HOME/bin" >> $GITHUB_PATH
 
       - name: Setup non-windows environment
         working-directory: ${{ github.workspace }}
@@ -148,6 +155,10 @@ jobs:
           file_name=$(ls ./tmp-libs)
           jdk_testimage="${{ github.workspace }}/tmp-libs/$file_name"
           echo "TESTIMAGE_PATH=$jdk_testimage" >> $GITHUB_ENV
+
+      - name: install dependencies
+        run: |
+          apk add freetype-dev fontconfig ttf-dejavu
 
       - name: Run AQA Docker Paralleltest ${{ matrix.suite }}_${{ matrix.test_list }}
         uses: adoptium/run-aqa@v2.0.1
