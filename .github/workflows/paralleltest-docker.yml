@@ -154,7 +154,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
-          curl -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}${{ secrets.SAS_TOKEN }}"
+          curl -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}?${{ secrets.SAS_TOKEN }}"
           mkdir ./tmp-libs && tar xvf jdk-native-libs.tar.gz -C ./tmp-libs
           file_name=$(ls ./tmp-libs)
           jdk_testimage="${{ github.workspace }}/tmp-libs/$file_name"
