@@ -75,8 +75,8 @@ jobs:
             print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
   setup-parallel:
-    runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
+    runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: configuration
     strategy:
       fail-fast: true
@@ -132,9 +132,10 @@ jobs:
           path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
 
   run-aqa-parallel:
+    name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: [setup-parallel, configuration]
-    name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
+    timeout-minutes: 720
     strategy:
       fail-fast: false
       matrix:
