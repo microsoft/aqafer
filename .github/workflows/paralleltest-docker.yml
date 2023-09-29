@@ -13,7 +13,7 @@ on:
         description: adoptium/aqa-tests repository
         required: true
         type: string
-        default: 'adoptium/aqa-tests:v0.9.6-release'
+        default: 'adoptium/aqa-tests:v0.9.7-release'
       containerRegistry:
         description: Container registry
         required: true
