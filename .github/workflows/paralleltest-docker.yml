@@ -26,6 +26,7 @@ on:
           required: true
           type: string
           default: None
+        default: '4'
 
 jobs:
   configuration:
@@ -87,8 +88,6 @@ jobs:
         run: |
           curl -s -o linux-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
           mkdir tmp && tar -xzf linux-binaries.tar.gz -C ./tmp
-          jdk_directory=$(ls ./tmp)
-          echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
       - uses: adoptium/run-aqa@v2.0.1
         with:
