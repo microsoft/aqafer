@@ -13,14 +13,19 @@ on:
         description: adoptium/aqa-tests repository
         required: true
         type: string
-        default: 'adoptium/aqa-tests:v0.9.6-release'
+        default: 'adoptium/aqa-tests:v0.9.9-release'
       containerRegistry:
         description: Container registry
         required: true
       testLists:
         description: Number of testLists to generate
         required: false
-        default: 4
+        default: '4'
+      pool:
+          description: Agent pool
+          required: true
+          type: string
+          default: None
 
 jobs:
   configuration:
@@ -46,7 +51,7 @@ jobs:
             print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
   setup-parallel-docker:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.pool }}
     container:
       image: ${{ inputs.containerRegistry }}
       env:
@@ -103,6 +108,7 @@ jobs:
   run-aqa-parallel-docker:
     runs-on: ubuntu-latest
     needs: [setup-parallel-docker, configuration]
+    timeout-minutes: 1440
     container:
       image: ${{ inputs.containerRegistry }}
       env:

@@ -20,6 +20,7 @@ on:
       version:
         description: JDK version
         required: false
+        type: choice
         options:
           - '11'
           - '17'
@@ -31,7 +32,7 @@ on:
       testLists:
         description: Number of testLists to generate
         required: false
-        default: 4
+        default: '4'
 
 env:  # Links to the JDK build under test and the native test libs
   USE_TESTENV_PROPERTIES: true
@@ -91,7 +92,6 @@ jobs:
           ls -la ./
           rm -rf ./*
           rm -rf ./.??*
-          ls -la ./
 
       - name: Setup windows environment
         working-directory: ${{ github.workspace }}
@@ -135,7 +135,7 @@ jobs:
     name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: [setup-parallel, configuration]
-    timeout-minutes: 720
+    timeout-minutes: 1440
     strategy:
       fail-fast: false
       matrix:
