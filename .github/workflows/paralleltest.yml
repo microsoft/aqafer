@@ -24,6 +24,7 @@ on:
         options:
           - '11'
           - '17'
+          - '21'
       pool:
         description: agent pool
         required: true
