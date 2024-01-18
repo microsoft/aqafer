@@ -84,6 +84,8 @@ jobs:
     name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: configuration
+    env:
+      LIB_DIR: "C:/vss-agent/2.312.0/_work/aqafer/aqafer/aqa-tests/TKG/lib"
     strategy:
       fail-fast: true
       matrix:
@@ -141,6 +143,8 @@ jobs:
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: [setup-parallel, configuration]
     timeout-minutes: 1440
+    env:
+      LIB_DIR: "C:/vss-agent/2.312.0/_work/aqafer/aqafer/aqa-tests/TKG/lib"
     strategy:
       fail-fast: false
       matrix:
