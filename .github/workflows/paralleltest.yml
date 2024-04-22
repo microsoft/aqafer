@@ -10,7 +10,7 @@ on:
         description: adoptium/aqa-tests repository
         required: true
         type: string
-        default: 'adoptium/aqa-tests:v0.9.7-release'
+        default: 'adoptium/aqa-tests:v1.0.0-release'
       testImage:
         description: Native Libs URL
         required: true
@@ -34,6 +34,10 @@ on:
         description: Number of testLists to generate
         required: false
         default: '4'
+
+
+# Dynamically set the name of the test-run
+run-name: Test JDK${{ inputs.version }} on ${{ inputs.pool }}
 
 env:  # Links to the JDK build under test and the native test libs
   USE_TESTENV_PROPERTIES: true
