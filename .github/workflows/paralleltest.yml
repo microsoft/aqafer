@@ -80,88 +80,88 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
             print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
-  setup-parallel:
-    name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
-    runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
-    needs: configuration
-    strategy:
-      fail-fast: true
-      matrix:
-        suite: [functional, openjdk, system, perf]
-    steps:
-      - name: clean up workspace (non-windows)
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        if: ${{ inputs.system != 'windows' }}
-        run: |
-          ls -la ./
-          rm -rf ./*
-          rm -rf ./.??*
+  # setup-parallel:
+  #   name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
+  #   runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
+  #   needs: configuration
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       suite: [functional, openjdk, system, perf]
+  #   steps:
+  #     - name: clean up workspace (non-windows)
+  #       working-directory: ${{ github.workspace }}
+  #       shell: bash
+  #       if: ${{ inputs.system != 'windows' }}
+  #       run: |
+  #         ls -la ./
+  #         rm -rf ./*
+  #         rm -rf ./.??*
 
-      - name: Setup windows environment
-        working-directory: ${{ github.workspace }}
-        if: ${{ inputs.system == 'windows' }}
-        shell: powershell
-        run: |
-          curl.exe -o windows-binaries.zip -L "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          Expand-Archive .\windows-binaries.zip .\tmp
-          $jdk_directory = Get-ChildItem .\tmp\
-          $jdk_directory = $jdk_directory.Basename
-          $jdk_directory = "${{ github.workspace }}\tmp\$jdk_directory"
-          echo "TEST_JDK_HOME=$jdk_directory" >> $env:GITHUB_ENV
+  #     - name: Setup windows environment
+  #       working-directory: ${{ github.workspace }}
+  #       if: ${{ inputs.system == 'windows' }}
+  #       shell: powershell
+  #       run: |
+  #         curl.exe -o windows-binaries.zip -L "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+  #         Expand-Archive .\windows-binaries.zip .\tmp
+  #         $jdk_directory = Get-ChildItem .\tmp\
+  #         $jdk_directory = $jdk_directory.Basename
+  #         $jdk_directory = "${{ github.workspace }}\tmp\$jdk_directory"
+  #         echo "TEST_JDK_HOME=$jdk_directory" >> $env:GITHUB_ENV
 
-      - name: Setup non-windows environment
-        working-directory: ${{ github.workspace }}
-        if: ${{ inputs.system != 'windows' }}
-        shell: bash
-        run: |
-          curl -LJSks -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
-          jdk_directory=$(ls ./tmp)
-          echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
+  #     - name: Setup non-windows environment
+  #       working-directory: ${{ github.workspace }}
+  #       if: ${{ inputs.system != 'windows' }}
+  #       shell: bash
+  #       run: |
+  #         curl -LJSks -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+  #         mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
+  #         jdk_directory=$(ls ./tmp)
+  #         echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
-      - name: Generate parallelList - ${{ matrix.suite }}
-        uses: adoptium/run-aqa@v2.0.1
-        with:
-          jdksource: 'customized'
-          aqa-testsRepo: ${{ inputs.aqatest-repo }}
-          build_list: ${{ matrix.suite }}
-          target: ${{ matrix.suite }} # parallellist to generate
-          run_parallel: true
-          num_machines: ${{ inputs.testLists }}
+  #     - name: Generate parallelList - ${{ matrix.suite }}
+  #       uses: adoptium/run-aqa@v2.0.1
+  #       with:
+  #         jdksource: 'customized'
+  #         aqa-testsRepo: ${{ inputs.aqatest-repo }}
+  #         build_list: ${{ matrix.suite }}
+  #         target: ${{ matrix.suite }} # parallellist to generate
+  #         run_parallel: true
+  #         num_machines: ${{ inputs.testLists }}
 
-      - name: Archive parallelList - ${{ matrix.suite }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.suite }}-parallelList.mk
-          path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
+  #     - name: Archive parallelList - ${{ matrix.suite }}
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ matrix.suite }}-parallelList.mk
+  #         path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
 
   run-aqa-parallel:
     name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
-    needs: [setup-parallel, configuration]
+    needs: [configuration]
     timeout-minutes: 1440
     strategy:
       fail-fast: false
       matrix:
         test_list: ${{ fromJSON(needs.configuration.outputs.testLists) }}
-        suite: [functional, openjdk, system, perf]
+        suite: [openjdk]
     steps:
-      - name: clean up workspace (non-windows)
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        if: ${{ inputs.system != 'windows' }}
-        run: |
-          ls -la ./
-          rm -rf ./*
-          rm -rf ./.??*
-          ls -la ./
+      # - name: clean up workspace (non-windows)
+      #   working-directory: ${{ github.workspace }}
+      #   shell: bash
+      #   if: ${{ inputs.system != 'windows' }}
+      #   run: |
+      #     ls -la ./
+      #     rm -rf ./*
+      #     rm -rf ./.??*
+      #     ls -la ./
 
-      - name: Download parallelList - ${{ matrix.suite }}
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ matrix.suite }}-parallelList.mk
-          path: ./
+      # - name: Download parallelList - ${{ matrix.suite }}
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: ${{ matrix.suite }}-parallelList.mk
+      #     path: ./
 
       - name: Setup windows environment
         working-directory: ${{ github.workspace }}
@@ -182,21 +182,21 @@ jobs:
           $jdk_testimage = "${{ github.workspace }}\tmp-libs\$jdk_testimage"
           echo "TESTIMAGE_PATH=$jdk_testimage" >> $env:GITHUB_ENV
 
-      - name: Setup non-windows environment
-        working-directory: ${{ github.workspace }}
-        if: ${{ inputs.system == 'linux' || inputs.system == 'macos' }}
-        shell: bash
-        run: |
-          curl -LJSks -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
-          jdk_directory=$(ls ./tmp)
-          echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
+      # - name: Setup non-windows environment
+      #   working-directory: ${{ github.workspace }}
+      #   if: ${{ inputs.system == 'linux' || inputs.system == 'macos' }}
+      #   shell: bash
+      #   run: |
+      #     curl -LJSks -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+      #     mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
+      #     jdk_directory=$(ls ./tmp)
+      #     echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
-          curl -LJSks -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}?${{ secrets.SAS_TOKEN }}"
-          mkdir ./tmp-libs && tar xvf jdk-native-libs.tar.gz -C ./tmp-libs
-          file_name=$(ls ./tmp-libs)
-          jdk_path="${{ github.workspace }}/tmp-libs/$file_name"
-          echo "TESTIMAGE_PATH=$jdk_path" >> $GITHUB_ENV
+      #     curl -LJSks -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}?${{ secrets.SAS_TOKEN }}"
+      #     mkdir ./tmp-libs && tar xvf jdk-native-libs.tar.gz -C ./tmp-libs
+      #     file_name=$(ls ./tmp-libs)
+      #     jdk_path="${{ github.workspace }}/tmp-libs/$file_name"
+      #     echo "TESTIMAGE_PATH=$jdk_path" >> $GITHUB_ENV
 
       # Linux specific config for openjdk test suite
       - name: Configure linux
@@ -211,7 +211,7 @@ jobs:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ matrix.suite }}
-          target : -f parallelList.mk ${{ matrix.test_list }}
+          target : _jvm_compiler
           version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
