@@ -22,9 +22,9 @@ on:
         required: false
         type: choice
         options:
-          - '11'
-          - '17'
-          - '21'
+          - '11u'
+          - '17u'
+          - '21u'
       pool:
         description: agent pool
         required: true
