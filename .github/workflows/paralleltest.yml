@@ -40,6 +40,7 @@ run-name: Test JDK${{ inputs.version }}u on ${{ inputs.pool }}
 env:  # Links to the JDK build under test and the native test libs
   USE_TESTENV_PROPERTIES: true
 
+
 permissions:
   id-token: write
   contents: read
