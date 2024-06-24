@@ -13,19 +13,14 @@ on:
         description: adoptium/aqa-tests repository
         required: true
         type: string
-        default: 'adoptium/aqa-tests:v0.9.9-release'
+        default: 'adoptium/aqa-tests:v0.9.7-release'
       containerRegistry:
         description: Container registry
         required: true
       testLists:
         description: Number of testLists to generate
         required: false
-        default: '4'
-      pool:
-          description: Agent pool
-          required: true
-          type: string
-          default: None
+        default: 4
 
 jobs:
   configuration:
@@ -51,7 +46,7 @@ jobs:
             print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
   setup-parallel-docker:
-    runs-on: ${{ inputs.pool }}
+    runs-on: ubuntu-latest
     container:
       image: ${{ inputs.containerRegistry }}
       env:
@@ -66,27 +61,12 @@ jobs:
         suite: [functional, openjdk, system, perf]
     steps:
 
-      - name: Setup ANT_HOME
+      - name: Setup environment
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
-          curl -OLJKSks https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
-          curl -o ant-contrib.tar.gz -LJSks https://sourceforge.net/projects/ant-contrib/files/ant-contrib/ant-contrib-1.0b2/ant-contrib-1.0b2-bin.tar.gz/download
-          tar xvf ant-contrib.tar.gz
-          tar xvf apache-ant-1.9.16-bin.tar.gz
-          mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
-          echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
-
-      - name: update PATH
-        run: |
-          echo "$ANT_HOME/bin" >> $GITHUB_PATH
-
-      - name: Setup TEST_JDK_HOME
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        run: |
-          curl -s -o linux-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf linux-binaries.tar.gz -C ./tmp
+          curl -s -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
           jdk_directory=$(ls ./tmp)
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
@@ -108,12 +88,10 @@ jobs:
   run-aqa-parallel-docker:
     runs-on: ubuntu-latest
     needs: [setup-parallel-docker, configuration]
-    timeout-minutes: 1440
     container:
-      image: ${{ inputs.containerRegistry }}
+      image: ${{ secrets.CONTAINER_REGISTRY }}
       env:
         USE_TESTENV_PROPERTIES: true
-        DISPLAY: ':1'
       options: --cpus 2
       credentials:
         username: ${{ secrets.ACR_TOKEN_NAME }}
@@ -131,44 +109,20 @@ jobs:
           name: ${{ matrix.suite }}-parallelList.mk
           path: ./
 
-      - name: Setup ANT_HOME
+      - name: Setup non-windows environment
         working-directory: ${{ github.workspace }}
         shell: bash
         run: |
-          curl -OLJKSks https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
-          curl -o ant-contrib.tar.gz -LJSks https://sourceforge.net/projects/ant-contrib/files/ant-contrib/ant-contrib-1.0b2/ant-contrib-1.0b2-bin.tar.gz/download
-          tar xvf ant-contrib.tar.gz
-          tar xvf apache-ant-1.9.16-bin.tar.gz
-          mv ant-contrib/lib/ant-contrib.jar apache-ant-1.9.16/lib/
-          echo "ANT_HOME=${{ github.workspace }}/apache-ant-1.9.16" >> $GITHUB_ENV
-          echo "ANT_OPTS="-Xms256M -Xmx512M"" >> $GITHUB_ENV
-
-      - name: update PATH
-        run: |
-          echo "$ANT_HOME/bin" >> $GITHUB_PATH
-
-      - name: Setup TEST_JDK_HOME
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        run: |
-          curl -s -o linux-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
-          mkdir tmp && tar -xzf linux-binaries.tar.gz -C ./tmp
+          curl -s -o ${{ inputs.system }}-binaries.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.customizedSdkUrl }}?${{ secrets.SAS_TOKEN }}"
+          mkdir tmp && tar -xzf ${{ inputs.system }}-binaries.tar.gz -C ./tmp
           jdk_directory=$(ls ./tmp)
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
-      - name: Setup TESTIMAGE_PATH
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        run: |
-          curl -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}?${{ secrets.SAS_TOKEN }}"
+          curl -o jdk-native-libs.tar.gz "${{ secrets.BASE_CONTAINER_URL }}${{ inputs.testImage }}${{ secrets.SAS_TOKEN }}"
           mkdir ./tmp-libs && tar xvf jdk-native-libs.tar.gz -C ./tmp-libs
           file_name=$(ls ./tmp-libs)
           jdk_testimage="${{ github.workspace }}/tmp-libs/$file_name"
           echo "TESTIMAGE_PATH=$jdk_testimage" >> $GITHUB_ENV
-
-      - name: install dependencies
-        run: |
-          apk add freetype-dev fontconfig ttf-dejavu
 
       - name: Run AQA Docker Paralleltest ${{ matrix.suite }}_${{ matrix.test_list }}
         uses: adoptium/run-aqa@v2.0.1

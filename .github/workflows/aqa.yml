@@ -8,7 +8,7 @@ on:
         required: true
       aqaTestsRepo:
         description: Adoptium aqa-tests repository # Make sure this branch is set to the latest release branch
-        default: 'adoptium/aqa-tests:v0.9.6-release'
+        default: 'adoptium/aqa-tests:v0.9.7-release'
         required: true
       runner:
         description: GitHub runner

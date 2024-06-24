@@ -10,20 +10,13 @@ on:
         description: adoptium/aqa-tests repository
         required: true
         type: string
-        default: 'adoptium/aqa-tests:v0.9.6-release'
+        default: 'adoptium/aqa-tests:v0.9.7-release'
       testImage:
         description: Native Libs URL
         required: true
       system:
         description: System being tested
         required: true
-      version:
-        description: JDK version
-        required: false
-        type: choice
-        options:
-          - '11'
-          - '17'
       pool:
         description: agent pool
         required: true
@@ -32,7 +25,7 @@ on:
       testLists:
         description: Number of testLists to generate
         required: false
-        default: '4'
+        default: 4
 
 env:  # Links to the JDK build under test and the native test libs
   USE_TESTENV_PROPERTIES: true
@@ -76,23 +69,14 @@ jobs:
             print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
   setup-parallel:
-    name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
+    name: Generate AQA parallelList - ${{ inputs.system }}_${{ matrix.suite }}
     needs: configuration
     strategy:
       fail-fast: true
       matrix:
         suite: [functional, openjdk, system, perf]
     steps:
-      - name: clean up workspace (non-windows)
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        if: ${{ inputs.system != 'windows' }}
-        run: |
-          ls -la ./
-          rm -rf ./*
-          rm -rf ./.??*
-
       - name: Setup windows environment
         working-directory: ${{ github.workspace }}
         if: ${{ inputs.system == 'windows' }}
@@ -116,7 +100,7 @@ jobs:
           echo "TEST_JDK_HOME=${{ github.workspace }}/tmp/$jdk_directory" >> $GITHUB_ENV
 
       - name: Generate parallelList - ${{ matrix.suite }}
-        uses: joe-braley/run-aqa@v1.0
+        uses: adoptium/run-aqa@v2.0.1
         with:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
@@ -132,26 +116,15 @@ jobs:
           path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
 
   run-aqa-parallel:
-    name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: [setup-parallel, configuration]
-    timeout-minutes: 1440
+    name: Run AQAvit verification ${{ inputs.system }} - _${{ matrix.suite }}.${{ matrix.test_list }}
     strategy:
       fail-fast: false
       matrix:
         test_list: ${{ fromJSON(needs.configuration.outputs.testLists) }}
         suite: [functional, openjdk, system, perf]
     steps:
-      - name: clean up workspace (non-windows)
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        if: ${{ inputs.system != 'windows' }}
-        run: |
-          ls -la ./
-          rm -rf ./*
-          rm -rf ./.??*
-          ls -la ./
-
       - name: Download parallelList - ${{ matrix.suite }}
         uses: actions/download-artifact@v2
         with:
@@ -201,13 +174,12 @@ jobs:
           Xvfb :1 -screen 0 1024x768x16 &
 
       - name: Run AQA tests parallel ${{ inputs.system }}_${{ matrix.suite }}_${{ matrix.test_list }}
-        uses: joe-braley/run-aqa@v1.0
+        uses: adoptium/run-aqa@v2.0.1
         with:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ matrix.suite }}
           target : -f parallelList.mk ${{ matrix.test_list }}
-          version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
         if: always() # Always run this step (even if the tests failed)
