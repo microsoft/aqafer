@@ -32,7 +32,7 @@ on:
       testLists:
         description: Number of testLists to generate
         required: false
-        default: 4
+        default: '4'
 
 # Dynamically set the name of the test-run
 run-name: Test JDK${{ inputs.version }}u on ${{ inputs.pool }}
