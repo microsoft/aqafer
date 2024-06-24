@@ -6,7 +6,7 @@ on:
       customizedSdkUrl:
         description: SDK URL
         required: true
-        default: 'jdk-11.0.19.tar.gz'
+        default: ''
       aqatest-repo:
         description: adoptium/aqa-tests repository
         required: true
@@ -15,7 +15,7 @@ on:
       testImage:
         description: Native Libs URL
         required: true
-        default: 'jdk-11.0.19-test-image.tar.gz'
+        default: ''
       version:
         description: JDK version
         required: false
@@ -25,7 +25,7 @@ on:
           - '17'
           - '21'
       pool:
-        description: agent pool
+        description: Agent Pool
         required: true
         type: string
         default: None
@@ -81,11 +81,11 @@ jobs:
           pool: ${{ inputs.pool }}
           blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
           destination_path: ${{ github.workspace }}/artifacts
-          AZURE_CLIENT_ID_TEST: ${{ secrets.AZURE_CLIENT_ID_TEST }}
-          AZURE_TENANT_ID_TEST: ${{ secrets.AZURE_TENANT_ID_TEST }}
-          AZURE_SUBSCRIPTION_ID_TEST: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
-          AZURE_STORAGE_ACCOUNT_TEST: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
-          AZURE_STORAGE_CONTAINER_TEST: ${{ secrets.AZURE_STORAGE_CONTAINER_TEST }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID_TEST }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
+          AZURE_STORAGE_CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER_TEST }}
 
       - name: Setup test environment
         run: |
@@ -131,11 +131,11 @@ jobs:
           pool: ${{ inputs.pool }}
           blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
           destination_path: ${{ github.workspace }}/artifacts
-          AZURE_CLIENT_ID_TEST: ${{ secrets.AZURE_CLIENT_ID_TEST }}
-          AZURE_TENANT_ID_TEST: ${{ secrets.AZURE_TENANT_ID_TEST }}
-          AZURE_SUBSCRIPTION_ID_TEST: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
-          AZURE_STORAGE_ACCOUNT_TEST: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
-          AZURE_STORAGE_CONTAINER_TEST: ${{ secrets.AZURE_STORAGE_CONTAINER_TEST }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID_TEST }}
+          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
+          AZURE_STORAGE_CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER_TEST }}
 
       - name: Download parallelList - ${{ matrix.suite }}
         uses: actions/download-artifact@v2
