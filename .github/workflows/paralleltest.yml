@@ -78,7 +78,6 @@ jobs:
       - name: Download artifacts
         uses: ./.github/vendor-templates/microsoft/az_download_artifacts
         with:
-          pool: ${{ inputs.pool }}
           blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
           destination_path: ${{ github.workspace }}/artifacts
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
@@ -128,7 +127,6 @@ jobs:
       - name: Download artifacts
         uses: ./.github/vendor-templates/microsoft/az_download_artifacts
         with:
-          pool: ${{ inputs.pool }}
           blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
           destination_path: ${{ github.workspace }}/artifacts
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}

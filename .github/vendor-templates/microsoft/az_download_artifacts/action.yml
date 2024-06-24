@@ -1,18 +1,6 @@
 name: Download artifacts from Azure
 
 inputs:
-  pool:
-    description: 'Pool name'
-    required: true
-    type: string
-  storage_account_name:
-    description: 'Azure Storage Account Name'
-    required: true
-    type: string
-  container_name:
-    description: 'Azure Storage Container Name'
-    required: true
-    type: string
   blobs:
     description: 'Azure Storage Blob Name'
     required: true
