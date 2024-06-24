@@ -20,7 +20,16 @@ on:
       testLists:
         description: Number of testLists to generate
         required: false
+<<<<<<< HEAD
         default: 4
+=======
+        default: '4'
+      pool:
+          description: Agent pool
+          required: true
+          type: string
+          default: None
+>>>>>>> 5d9d6f4 (revisions)
 
 jobs:
   configuration:

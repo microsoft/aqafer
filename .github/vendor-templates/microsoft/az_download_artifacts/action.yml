@@ -1,0 +1,86 @@
+name: Download artifacts from Azure
+
+inputs:
+  pool:
+    description: 'Pool name'
+    required: true
+    type: string
+  storage_account_name:
+    description: 'Azure Storage Account Name'
+    required: true
+    type: string
+  container_name:
+    description: 'Azure Storage Container Name'
+    required: true
+    type: string
+  blobs:
+    description: 'Azure Storage Blob Name'
+    required: true
+    type: string
+  destination_path:
+    description: 'Destination path to download the blob'
+    required: true
+    type: string
+  AZURE_CLIENT_ID_TEST:
+    description: 'Azure Client ID'
+    required: true
+  AZURE_TENANT_ID_TEST:
+    description: 'Azure Tenant ID'
+    required: true
+  AZURE_SUBSCRIPTION_ID_TEST:
+    description: 'Azure Subscription ID'
+    required: true
+  AZURE_STORAGE_ACCOUNT_TEST:
+    description: 'Azure Storage Account Name'
+    required: true
+  AZURE_STORAGE_CONTAINER_TEST:
+    description: 'Azure Storage Container Name'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+          client-id: ${{ inputs.AZURE_CLIENT_ID_TEST }}
+          tenant-id: ${{ inputs.AZURE_TENANT_ID_TEST }}
+          subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID_TEST }}
+
+    - name: Download blob from Azure Storage
+      if: ${{ runner.os != 'windows' }}
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.destination_path }}
+        IFS=',' read -r -a array <<< "${{ inputs.blobs }}"
+        for blob in "${array[@]}"
+        do
+          az storage blob download \
+          --account-name ${{ inputs.AZURE_STORAGE_ACCOUNT_TEST }} \
+          --container-name ${{ inputs.AZURE_STORAGE_CONTAINER_TEST }} \
+          --name "$blob" \
+          --file "${{ inputs.destination_path }}/$blob" \
+          --auth-mode login \
+          > /dev/null
+        done
+
+    - name: Download blob from Azure Storage
+      if: ${{ runner.os == 'windows' }}
+      shell: pwsh
+      run: |
+        if (-Not (Test-Path -Path ${{ inputs.destination_path }})) {
+          New-Item -ItemType Directory -Path ${{ inputs.destination_path }} -Force
+        }
+
+        $blobs = "${{ inputs.blobs }}"
+        $blobArray = $blobs -split ','
+
+        foreach ($blob in $blobArray) {
+          az storage blob download `
+            --account-name "${{ inputs.AZURE_STORAGE_ACCOUNT_TEST }}" `
+            --container-name "${{ inputs.AZURE_STORAGE_CONTAINER_TEST }}" `
+            --name "$blob" `
+            --file "${{ inputs.destination_path }}\$blob" `
+            --auth-mode login `
+            > $null 2>&1
+        }
