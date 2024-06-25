@@ -75,7 +75,9 @@ jobs:
       - name: Download artifacts
         uses: ./.github/vendor-templates/microsoft/az_download_artifacts
         with:
-          blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
+          blobs: 
+            - ${{ inputs.customizedSdkUrl }}
+            - ${{ inputs.testImage }}
           destination_path: ${{ github.workspace }}/artifacts
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
