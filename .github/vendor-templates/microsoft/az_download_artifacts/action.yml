@@ -9,19 +9,19 @@ inputs:
     description: 'Destination path to download the blob'
     required: true
     type: string
-  AZURE_CLIENT_ID_TEST:
+  AZURE_CLIENT_ID:
     description: 'Azure Client ID'
     required: true
-  AZURE_TENANT_ID_TEST:
+  AZURE_TENANT_ID:
     description: 'Azure Tenant ID'
     required: true
-  AZURE_SUBSCRIPTION_ID_TEST:
+  AZURE_SUBSCRIPTION_ID:
     description: 'Azure Subscription ID'
     required: true
-  AZURE_STORAGE_ACCOUNT_TEST:
+  AZURE_STORAGE_ACCOUNT:
     description: 'Azure Storage Account Name'
     required: true
-  AZURE_STORAGE_CONTAINER_TEST:
+  AZURE_STORAGE_CONTAINER:
     description: 'Azure Storage Container Name'
     required: true
 
@@ -31,9 +31,9 @@ runs:
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
-          client-id: ${{ inputs.AZURE_CLIENT_ID_TEST }}
-          tenant-id: ${{ inputs.AZURE_TENANT_ID_TEST }}
-          subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID_TEST }}
+          client-id: ${{ inputs.AZURE_CLIENT_ID }}
+          tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+          subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
 
     - name: Download blob from Azure Storage
       if: ${{ runner.os != 'windows' }}
@@ -44,8 +44,8 @@ runs:
         for blob in "${array[@]}"
         do
           az storage blob download \
-          --account-name ${{ inputs.AZURE_STORAGE_ACCOUNT_TEST }} \
-          --container-name ${{ inputs.AZURE_STORAGE_CONTAINER_TEST }} \
+          --account-name ${{ inputs.AZURE_STORAGE_ACCOUNT }} \
+          --container-name ${{ inputs.AZURE_STORAGE_CONTAINER }} \
           --name "$blob" \
           --file "${{ inputs.destination_path }}/$blob" \
           --auth-mode login \
@@ -65,8 +65,8 @@ runs:
 
         foreach ($blob in $blobArray) {
           az storage blob download `
-            --account-name "${{ inputs.AZURE_STORAGE_ACCOUNT_TEST }}" `
-            --container-name "${{ inputs.AZURE_STORAGE_CONTAINER_TEST }}" `
+            --account-name "${{ inputs.AZURE_STORAGE_ACCOUNT }}" `
+            --container-name "${{ inputs.AZURE_STORAGE_CONTAINER }}" `
             --name "$blob" `
             --file "${{ inputs.destination_path }}\$blob" `
             --auth-mode login `

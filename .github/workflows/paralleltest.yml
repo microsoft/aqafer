@@ -47,6 +47,7 @@ permissions:
 
 jobs:
   configuration:
+    environment: paralleltest
     runs-on: ubuntu-latest
     outputs:
       agent-config: ${{ steps.setup.outputs.config }}
