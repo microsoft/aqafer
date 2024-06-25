@@ -39,11 +39,13 @@ def set_openjdk_environment_variables(env_var_name, env_value) -> None:
     with open(github_env, 'a') as file:
         file.write(f"{ env_var_name }={ env_value }\n")
 
+def set_required_environment_variables() -> None:
+
+    test_jdk_home, testimage_path = get_test_resources_path(destination)
+    set_openjdk_environment_variables("TEST_JDK_HOME", test_jdk_home)
+    set_openjdk_environment_variables("TESTIMAGE_PATH", testimage_path)
+
 def main(source: Path, destination: Path) -> None:
-    env_vars = {
-        "TEST_JDK_HOME": None,
-        "TESTIMAGE_PATH": None,
-    }
 
     child_directories = [child for child in source.iterdir()]
 
@@ -53,9 +55,7 @@ def main(source: Path, destination: Path) -> None:
         else:
             expand_tar_archive(child, destination)
 
-    env_vars["TEST_JDK_HOME"], env_vars["TESTIMAGE_PATH"] = get_test_resources_path(destination)
-    set_openjdk_environment_variables("TEST_JDK_HOME", env_vars["TEST_JDK_HOME"])
-    set_openjdk_environment_variables("TESTIMAGE_PATH", env_vars["TESTIMAGE_PATH"])
+    set_required_environment_variables()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
