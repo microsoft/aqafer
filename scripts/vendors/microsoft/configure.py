@@ -17,12 +17,10 @@ def main(github_pool, num_lists):
       else:
         github_runner = f"config=['self-hosted', '1ES.Pool={ github_pool }']"
 
-  with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-    print(github_runner, file=fh)
-
   test_lists = [f"testList_{list}" for list in range(num_lists)]
 
   with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+    print(github_runner, file=fh)
     print(f"testConfig={json.dumps(test_lists)}", file=fh)
 
 if __name__ == "__main__":
