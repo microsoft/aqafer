@@ -73,9 +73,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Clean up workspace
-        if: ${{ runner.os == 'macOS' }}
-        uses: ./.github/vendor-templates/microsoft/clean_workspace
+      # - name: Clean up workspace
+      #   if: ${{ runner.os == 'macOS' }}
+      #   uses: ./.github/vendor-templates/microsoft/clean_workspace
 
       - name: Download artifacts
         uses: ./.github/vendor-templates/microsoft/az_download_artifacts
@@ -122,9 +122,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Clean up workspace
-        if: ${{ runner.os == 'macOS' }}
-        uses: ./.github/vendor-templates/microsoft/clean_workspace
+      # - name: Clean up workspace
+      #   if: ${{ runner.os == 'macOS' }}
+      #   uses: ./.github/vendor-templates/microsoft/clean_workspace
 
       - name: Download artifacts
         uses: ./.github/vendor-templates/microsoft/az_download_artifacts
