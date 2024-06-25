@@ -10,7 +10,7 @@ def main(github_pool, num_lists):
   for platform in platforms:
     if platform in github_pool:
       if "macos" in github_pool and "arm64" in github_pool:
-        github_runner = "config=['self-hosted', 'macOS', 'ARM64']"
+        github_runner = "config='macos-14'"
       elif "macos" in github_pool and "x64" in github_pool:
         github_runner = "config='macos-11'"
       else:
