@@ -1,3 +1,7 @@
+# Purpose: Extract the contents of the archive to the destination directory and set the required environment variables.
+# There should only ever be two files to extract from the archive, the test JDK and the test image.
+# Usage: python setup_environment.py --source <path_to_archive> --destination <destination_directory>
+
 import argparse
 import tarfile
 import zipfile

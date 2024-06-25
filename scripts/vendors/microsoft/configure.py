@@ -1,3 +1,6 @@
+# Purpose: Set the type of runner to use in the workflow and the number of test lists to generate.
+# Usage: python configure.py --pool <pool_name> --testLists <number_of_test_lists>
+
 import os
 import json
 import argparse
