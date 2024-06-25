@@ -1,0 +1,15 @@
+
+inputs:
+  system:
+    description: 'Operating system'
+    required: true
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+      # Linux specific config for openjdk test suite
+      - name: Configure xvfb
+        shell: bash
+        run: |
+          Xvfb :1 -screen 0 1024x768x16 &
