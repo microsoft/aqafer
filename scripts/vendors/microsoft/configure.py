@@ -20,8 +20,7 @@ def main(github_pool, num_lists):
   with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
     print(github_runner, file=fh)
 
-  for list in range(num_lists):
-    test_lists.append(f"testList_{list}")
+  test_lists = [f"testList_{list}" for list in range(num_lists)]
 
   with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
     print(f"testConfig={json.dumps(test_lists)}", file=fh)
