@@ -29,6 +29,7 @@ def main(github_pool, num_lists):
 
   github_runner = get_runner_config(github_pool.lower())
   test_lists = set_number_of_test_lists(num_lists)
+  print(test_lists)
 
   if github_runner:
     set_output_variables(github_runner)
@@ -36,7 +37,7 @@ def main(github_pool, num_lists):
     raise Exception(f"Runner configuration not found for pool: {github_pool}")
 
   # Non-parallel runs will not leverage test lists
-  if test_lists > 0:
+  if test_lists:
     set_output_variables(f"testConfig={json.dumps(test_lists)}")
 
 if __name__ == "__main__":
@@ -46,5 +47,6 @@ if __name__ == "__main__":
   parser.add_argument('--testLists', type=int, help='Number of test lists')
   args = parser.parse_args()
 
+  pool = args.pool
   num_lists = args.testLists
-  main(args.pool, num_lists)
+  main(pool, num_lists)

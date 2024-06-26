@@ -75,14 +75,11 @@ jobs:
           python ./scripts/vendors/microsoft/configure.py --pool ${{ inputs.pool }} --testLists 0
 
   run-aqa-parallel:
-    name: Execute ${{ matrix.suite }} ${{ inputs.aqa-targets }}
-    runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
+    name: Execute ${{ inputs.suite }} ${{ inputs.aqa-targets }}
+#     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
+    runs-on: ubuntu-latest
     needs: [configuration]
     timeout-minutes: 1440
-    strategy:
-      fail-fast: false
-      matrix:
-        suite: ${{ inputs.suite }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -106,17 +103,17 @@ jobs:
         if: ${{ runner.os == 'linux' }}
         uses: ./.github/vendor-templates/microsoft/configure_linux
 
-      - name: Run ${{ matrix.suite }} ${{ inputs.aqa-targets }}
+      - name: Run ${{ inputs.suite }} ${{ inputs.aqa-targets }}
         uses: adoptium/run-aqa@v2.0.1
         with:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
-          build_list: ${{ matrix.suite }}
+          build_list: ${{ inputs.suite }}
           target : _testList TESTLIST=${{ inputs.aqa-targets }}
           version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
         if: always() # Always run this step (even if the tests failed)
         with:
-          name: test_output_${{ matrix.suite }}
+          name: test_output_${{ inputs.suite }}
           path: ./**/output_*/*.tap
