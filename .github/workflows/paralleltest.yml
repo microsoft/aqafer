@@ -33,6 +33,11 @@ on:
         description: Number of testLists to generate
         required: false
         default: '4'
+      storage_container:
+        description: Storage Container
+        required: true
+        type: string
+        default: ''
 
 # Dynamically set the name of the test-run
 run-name: Test JDK${{ inputs.version }}u on ${{ inputs.pool }}
@@ -81,7 +86,7 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-          AZURE_STORAGE_CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER }}
+          AZURE_STORAGE_CONTAINER: ${{ inputs.storage_container }}
 
       - name: Setup test environment
         run: |
