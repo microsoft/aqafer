@@ -109,7 +109,7 @@ jobs:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ inputs.suite }}
-          target : _testList TESTLIST=$TESTLIST
+          target : _${{ inputs.aqa-targets }}
           version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
