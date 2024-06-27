@@ -68,7 +68,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-        # TODO: Setup will need to be optional on the number of test lists.
       - name: Setup
         id: setup
         run: |
@@ -76,8 +75,7 @@ jobs:
 
   run-aqa-parallel:
     name: Execute ${{ inputs.suite }} ${{ inputs.aqa-targets }}
-#     runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(needs.configuration.outputs.agent-config) }}
     needs: [configuration]
     timeout-minutes: 1440
     steps:
