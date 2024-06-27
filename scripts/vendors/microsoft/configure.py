@@ -19,16 +19,26 @@ def get_runner_config(pool_name: str) -> str:
             else:
                 return f"config=['self-hosted', '1ES.Pool={ pool_name }']"
 
+def set_output_variables(output_variable: str) -> None:
+    with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+        print(output_variable, file=fh)
+
 def main(github_pool, num_lists):
   github_runner = None
   test_lists = []
 
   github_runner = get_runner_config(github_pool.lower())
   test_lists = set_number_of_test_lists(num_lists)
+  print(test_lists)
 
-  with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-    print(github_runner, file=fh)
-    print(f"testConfig={json.dumps(test_lists)}", file=fh)
+  if github_runner:
+    set_output_variables(github_runner)
+  else:
+    raise Exception(f"Runner configuration not found for pool: {github_pool}")
+
+  # Non-parallel runs will not leverage test lists
+  if test_lists:
+    set_output_variables(f"testConfig={json.dumps(test_lists)}")
 
 if __name__ == "__main__":
 
@@ -37,6 +47,6 @@ if __name__ == "__main__":
   parser.add_argument('--testLists', type=int, help='Number of test lists')
   args = parser.parse_args()
 
+  pool = args.pool
   num_lists = args.testLists
-  main(args.pool, num_lists)
-
+  main(pool, num_lists)
