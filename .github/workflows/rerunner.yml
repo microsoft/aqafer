@@ -87,10 +87,10 @@ jobs:
         with:
           blobs: '${{ inputs.customizedSdkUrl }},${{ inputs.testImage }}'
           destination_path: ${{ github.workspace }}/artifacts
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID_TEST }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }}
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
           AZURE_STORAGE_CONTAINER: ${{ inputs.storage_container }}
 
       - name: Setup test environment
