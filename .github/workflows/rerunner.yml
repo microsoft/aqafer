@@ -1,4 +1,4 @@
-name: Run AQAvit Paralleltest
+name: Run AQAvit Test suite
 
 on:
   workflow_dispatch: # Allows the job to be manually triggered
