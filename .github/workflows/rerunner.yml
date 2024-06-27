@@ -103,11 +103,13 @@ jobs:
 
       - name: Run ${{ inputs.suite }} ${{ inputs.aqa-targets }}
         uses: adoptium/run-aqa@v2.0.1
+        env:
+          TESTLIST: ${{ inputs.aqa-targets }}
         with:
           jdksource: 'customized'
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ inputs.suite }}
-          target : _testList TESTLIST=${{ inputs.aqa-targets }}
+          target : _testList TESTLIST=$TESTLIST
           version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
