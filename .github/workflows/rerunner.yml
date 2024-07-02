@@ -110,7 +110,7 @@ jobs:
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ inputs.suite }}
           target : _${{ inputs.aqa-targets }}
-          version: ${{ inputs.version }}
+          version: ${{ inputs.version }}u
 
       - uses: actions/upload-artifact@v2
         if: always() # Always run this step (even if the tests failed)
