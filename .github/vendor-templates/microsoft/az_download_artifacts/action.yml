@@ -59,10 +59,12 @@ runs:
         if (-Not (Test-Path -Path ${{ inputs.destination_path }})) {
           New-Item -ItemType Directory -Path ${{ inputs.destination_path }} -Force
         }
+        Write-Host "Artifact directory created..."
 
         $blobs = "${{ inputs.blobs }}"
         $blobArray = $blobs -split ','
 
+        Write-Host "Downloading blobs from Azure Storage"
         foreach ($blob in $blobArray) {
           az storage blob download `
             --account-name "${{ inputs.AZURE_STORAGE_ACCOUNT }}" `
