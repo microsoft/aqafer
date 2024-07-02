@@ -93,13 +93,13 @@ jobs:
           AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT_TEST }}
           AZURE_STORAGE_CONTAINER: ${{ inputs.storage_container }}
 
-      - name: Setup test environment
-        run: |
-          python ./scripts/vendors/microsoft/setup_environment.py --source ${{ github.workspace }}/artifacts --destination ${{ github.workspace }}/jdk
-
       - name: Configure linux
         if: ${{ runner.os == 'linux' }}
         uses: ./.github/vendor-templates/microsoft/configure_linux
+
+      - name: Setup test environment
+        run: |
+          python ./scripts/vendors/microsoft/setup_environment.py --source ${{ github.workspace }}/artifacts --destination ${{ github.workspace }}/jdk
 
       - name: Run ${{ inputs.suite }} ${{ inputs.aqa-targets }}
         uses: adoptium/run-aqa@v2.0.1
