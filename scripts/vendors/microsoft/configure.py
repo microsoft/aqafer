@@ -31,7 +31,6 @@ def main(github_pool, num_lists):
 
   github_runner = get_runner_config(github_pool)
   test_lists = set_number_of_test_lists(num_lists)
-  print(test_lists)
 
   if github_runner:
     set_output_variables(github_runner)
