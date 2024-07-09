@@ -21,9 +21,9 @@ on:
         required: false
         type: choice
         options:
-          - '11'
-          - '17'
-          - '21'
+          - '11u'
+          - '17u'
+          - '21u'
       suite:
         description: AQAvit Test suite
         required: true
@@ -110,7 +110,7 @@ jobs:
           aqa-testsRepo: ${{ inputs.aqatest-repo }}
           build_list: ${{ inputs.suite }}
           target : _${{ inputs.aqa-targets }}
-          version: ${{ inputs.version }}u
+          version: ${{ inputs.version }}
 
       - uses: actions/upload-artifact@v2
         if: always() # Always run this step (even if the tests failed)
