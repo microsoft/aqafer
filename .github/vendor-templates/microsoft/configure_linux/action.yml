@@ -17,4 +17,4 @@ runs:
       - name: configure Python3
         shell: bash
         run: |
-          sudo ln -s /usr/bin/python3 /usr/bin/python
+          sudo ln -s /usr/bin/python3 /usr/local/bin/python
