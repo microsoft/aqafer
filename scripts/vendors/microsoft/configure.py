@@ -10,12 +10,14 @@ def set_number_of_test_lists(num_lists: int) -> str:
 
 def get_runner_config(pool_name: str) -> str:
     platforms = ["windows-x64", "windows-arm64", "linux-x64", "linux-arm64", "macos-x64", "macos-arm64"]
+    lowered_pool_name = pool_name.lower()
+
     for platform in platforms:
-        if platform in pool_name:
-            if "macos" in pool_name and "arm64" in pool_name:
+        if platform in lowered_pool_name:
+            if "macos" in lowered_pool_name and "arm64" in lowered_pool_name:
                 return "config='macos-14'"
-            elif "macos" in pool_name and "x64" in pool_name:
-                return "config='macos-11'"
+            elif "macos" in lowered_pool_name and "x64" in lowered_pool_name:
+                return "config='macos-12'"
             else:
                 return f"config=['self-hosted', '1ES.Pool={ pool_name }']"
 
@@ -27,9 +29,8 @@ def main(github_pool, num_lists):
   github_runner = None
   test_lists = []
 
-  github_runner = get_runner_config(github_pool.lower())
+  github_runner = get_runner_config(github_pool)
   test_lists = set_number_of_test_lists(num_lists)
-  print(test_lists)
 
   if github_runner:
     set_output_variables(github_runner)

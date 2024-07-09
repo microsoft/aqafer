@@ -13,3 +13,8 @@ runs:
         shell: bash
         run: |
           Xvfb :1 -screen 0 1024x768x16 &
+
+      - name: configure Python3
+        shell: bash
+        run: |
+          sudo ln -s /usr/bin/python3 /usr/local/bin/python
